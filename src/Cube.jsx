@@ -1,3 +1,6 @@
+import *  as THREE from 'three'
+THREE.ColorManagement.legacyMode = false
+
 export default function Cube() {
   return (
     // material 0 = right

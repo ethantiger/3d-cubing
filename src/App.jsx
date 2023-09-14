@@ -8,9 +8,11 @@ function App() {
 
   return (
     <>
-      <Canvas>
+      <Canvas camera={{position:[5,5,5]}}>
         <OrbitControls />
         <Cube />
+        {/* <directionalLight position={[3,3,3]} intensity={0.5}/>
+        <ambientLight intensity={0.3}/> */}
       </Canvas>
     </>
   )
