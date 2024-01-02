@@ -1,7 +1,119 @@
 import *  as THREE from 'three'
 THREE.ColorManagement.legacyMode = false
+import { useFrame, useThree } from '@react-three/fiber'
+import { useEffect, useRef, useState } from 'react'
+import { useKeyboardControls } from '@react-three/drei'
 
 export default function Cube() {
+  const [press, setPress] = useState(true)
+  const [sub, get] = useKeyboardControls()
+  const three = useThree()
+
+  let groupRef = useRef()
+
+  const corner1 = useRef()
+  const corner2 = useRef()
+  const corner3 = useRef()
+  const corner4 = useRef()
+  const corner5 = useRef()
+  const corner6 = useRef()
+  const corner7 = useRef()
+  const corner8 = useRef()
+
+  const edge1 = useRef()
+  const edge2 = useRef()
+  const edge3 = useRef()
+  const edge4 = useRef()
+  const edge5 = useRef()
+  const edge6 = useRef()
+  const edge7 = useRef()
+  const edge8 = useRef()
+  const edge9 = useRef()
+  const edgeA = useRef()
+  const edgeB = useRef()
+  const edgeC = useRef()
+
+  const center1 = useRef()
+  const center2 = useRef()
+  const center3 = useRef()
+  const center4 = useRef()
+  const center5 = useRef()
+  const center6 = useRef()
+
+  const pieces = [corner1, corner2, corner3, corner4, corner5, corner6, corner7, corner8, edge1, edge2, edge3, edge4, edge5, edge6, edge7, edge8, edge9, edgeA, edgeB, edgeC, center1, center2, center3, center4, center5, center6]
+  // axis = {name: 'X', value: 1}
+  const createGroup = (axis) => {
+    pieces.forEach((piece) => {
+      Math.round(piece.current.position[axis.name]) === axis.value ? groupRef.current.add(piece.current) : null
+    })
+  }
+
+  const clearGroup = (state) => {
+    for (let i = groupRef.current.children.length - 1; i >= 0; i--) {
+      const child = groupRef.current.children[i];
+      groupRef.current.remove(child);
+      state.scene.add(child);
+    }
+  }
+
+  const rotateGroup = (axis,direction) => {
+
+    const axisMap = {
+      'x': new THREE.Vector3(1,0,0),
+      'y': new THREE.Vector3(0,1,0),
+      'z': new THREE.Vector3(0,0,1)
+    }
+    if (groupRef.current) {
+      const rotationMatrix = new THREE.Matrix4().makeRotationAxis(axisMap[axis],Math.PI / 2 * direction); // Adjust rotation speed
+      groupRef.current.children.forEach(child => {
+        child.applyMatrix4(rotationMatrix);
+      });
+      console.log([...three.scene.children])
+    }
+  }
+
+  const printChildren = () => {
+    const names = []
+    groupRef.current.children.forEach((child) => names.push(child.name))
+    console.log([...names])
+  }
+  
+  useFrame((state,delta) => {
+    const { U, F, R } = get() 
+    if (press) {
+      if (U) {
+        setPress(false)
+        clearGroup(state)
+        createGroup({name: 'y', value: 1})
+        rotateGroup('y', -1)
+        printChildren()
+        console.log(state.scene.children)
+        setTimeout(() => setPress(true), 200)
+      }
+      if (F) {
+        setPress(false)
+        clearGroup(state)
+        createGroup({name:'z', value:1})
+        rotateGroup('z', -1)
+        printChildren()
+        console.log(state.scene.children)
+        setTimeout(() => setPress(true), 200)
+      }
+      if (R) {
+        setPress(false)
+        clearGroup(state)
+        createGroup({name:'x', value:1})
+        rotateGroup('x', -1)
+        printChildren()
+        console.log(state.scene.children)
+        setTimeout(() => setPress(true), 200)
+      }
+    }
+  })
+
+  useEffect(() => {
+    console.log(three.scene.children)
+  },[])
   return (
     // material 0 = right
     // material 1 = left
@@ -10,59 +122,60 @@ export default function Cube() {
     // material 4 = front
     // material 5 = back
     <>
+      <group ref={groupRef}> </group>
     {/*****************  TOP LAYER **********************/}
-    {/* T F R */}
-      <mesh position={[1,1,1]}>
+      {/* T F R */}
+      <mesh ref={corner1} position={[1,1,1]} name="TFR">
         <boxGeometry />
         <meshBasicMaterial attach="material-0" color="orange" />
         <meshBasicMaterial attach="material-2" color="white" />
         <meshBasicMaterial attach="material-4" color="blue" />
       </mesh>
     {/* T F */}
-      <mesh position={[0,1,1]}>
+      <mesh ref={edge1} position={[0,1,1]} name="TF">
         <boxGeometry />
         <meshBasicMaterial attach="material-2" color="white" />
         <meshBasicMaterial attach="material-4" color="blue" />
       </mesh>
     {/* T F L */}
-      <mesh position={[-1,1,1]}>
+      <mesh ref={corner2} position={[-1,1,1]} name="TFL">
         <boxGeometry />
         <meshBasicMaterial attach="material-1" color="red" />
         <meshBasicMaterial attach="material-2" color="white" />
         <meshBasicMaterial attach="material-4" color="blue" />
       </mesh>
     {/* T R */}
-      <mesh position={[1,1,0]}>
+      <mesh ref={edge2} position={[1,1,0]} name="TR">
         <boxGeometry />
         <meshBasicMaterial attach="material-0" color="orange" />
         <meshBasicMaterial attach="material-2" color="white" />
       </mesh>
     {/* T */}
-      <mesh position={[0,1,0]}>
+      <mesh ref={center1} position={[0,1,0]} name="T">
         <boxGeometry />
         <meshBasicMaterial attach="material-2" color="white" />
       </mesh>
     {/* T L */}
-      <mesh position={[-1,1,0]}>
+      <mesh ref={edge3} position={[-1,1,0]} name="TL">
         <boxGeometry />
         <meshBasicMaterial attach="material-1" color="red" />
         <meshBasicMaterial attach="material-2" color="white" />
       </mesh>
     {/* T R B*/}
-      <mesh position={[1,1,-1]}>
+      <mesh ref={corner3} position={[1,1,-1]} name="TRB">
         <boxGeometry />
         <meshBasicMaterial attach="material-0" color="orange" />
         <meshBasicMaterial attach="material-2" color="white" />
         <meshBasicMaterial attach="material-5" color="green" />
       </mesh>
     {/* T B */}
-      <mesh position={[0,1,-1]}>
+      <mesh ref={edge4} position={[0,1,-1]} name="TB">
         <boxGeometry />
         <meshBasicMaterial attach="material-2" color="white" />
         <meshBasicMaterial attach="material-5" color="green" />
       </mesh>
     {/* T L B */}
-      <mesh position={[-1,1,-1]}>
+      <mesh ref={corner4} position={[-1,1,-1]} name="TLB">
         <boxGeometry />
         <meshBasicMaterial attach="material-1" color="red" />
         <meshBasicMaterial attach="material-2" color="white" />
@@ -73,45 +186,45 @@ export default function Cube() {
     {/*****************  MIDDLE LAYER **********************/}
 
     {/* F R */}
-    <mesh position={[1,0,1]}>
+    <mesh ref={edge5} position={[1,0,1]} name="FR">
         <boxGeometry />
         <meshBasicMaterial attach="material-0" color="orange" />
         <meshBasicMaterial attach="material-4" color="blue" />
       </mesh>
     {/* F */}
-      <mesh position={[0,0,1]}>
+      <mesh ref={center2} position={[0,0,1]} name="F">
         <boxGeometry />
         <meshBasicMaterial attach="material-4" color="blue" />
       </mesh>
     {/* F L */}
-      <mesh position={[-1,0,1]}>
+      <mesh ref={edge6} position={[-1,0,1]} name="FL">
         <boxGeometry />
         <meshBasicMaterial attach="material-1" color="red" />
         <meshBasicMaterial attach="material-4" color="blue" />
       </mesh>
     {/* R */}
-      <mesh position={[1,0,0]}>
+      <mesh ref={center3} position={[1,0,0]} name="R">
         <boxGeometry />
         <meshBasicMaterial attach="material-0" color="orange" />
       </mesh>
     {/* L */}
-      <mesh position={[-1,0,0]}>
+      <mesh ref={center4} position={[-1,0,0]} name="L">
         <boxGeometry />
         <meshBasicMaterial attach="material-1" color="red" />
       </mesh>
     {/* R B */}
-      <mesh position={[1,0,-1]}>
+      <mesh ref={edge7} position={[1,0,-1]} name="RB">
         <boxGeometry />
         <meshBasicMaterial attach="material-0" color="orange" />
         <meshBasicMaterial attach="material-5" color="green" />
       </mesh>
     {/* B */}
-      <mesh position={[0,0,-1]}>
+      <mesh ref={center5} position={[0,0,-1]} name="B">
         <boxGeometry />
         <meshBasicMaterial attach="material-5" color="green" />
       </mesh>
     {/* L B */}
-      <mesh position={[-1,0,-1]}>
+      <mesh ref={edge8} position={[-1,0,-1]} name="LB">
         <boxGeometry />
         <meshBasicMaterial attach="material-1" color="red" />
         <meshBasicMaterial attach="material-5" color="green" />
@@ -121,57 +234,57 @@ export default function Cube() {
       {/*****************  BOTTOM LAYER **********************/}
 
     {/* F R Bot*/}
-      <mesh position={[1,-1,1]}>
+      <mesh ref={corner5} position={[1,-1,1]} name="FRBot">
         <boxGeometry />
         <meshBasicMaterial attach="material-0" color="orange" />
         <meshBasicMaterial attach="material-3" color="yellow" />
         <meshBasicMaterial attach="material-4" color="blue" />
       </mesh>
     {/* F Bot*/}
-      <mesh position={[0,-1,1]}>
+      <mesh ref={edge9} position={[0,-1,1]} name="FBot">
         <boxGeometry />
         <meshBasicMaterial attach="material-3" color="yellow" />
         <meshBasicMaterial attach="material-4" color="blue" />
       </mesh>
     {/* F L Bot*/}
-      <mesh position={[-1,-1,1]}>
+      <mesh ref={corner6} position={[-1,-1,1]} name="FLBot">
         <boxGeometry />
         <meshBasicMaterial attach="material-1" color="red" />
         <meshBasicMaterial attach="material-3" color="yellow" />
         <meshBasicMaterial attach="material-4" color="blue" />
       </mesh>
     {/* R Bot*/}
-      <mesh position={[1,-1,0]}>
+      <mesh ref={edgeA} position={[1,-1,0]} name="RBot">
         <boxGeometry />
         <meshBasicMaterial attach="material-0" color="orange" />
         <meshBasicMaterial attach="material-3" color="yellow" />
       </mesh>
     {/* Bot */}
-      <mesh position={[0,-1,0]}>
+      <mesh ref={center6} position={[0,-1,0]} name="Bot">
         <boxGeometry />
         <meshBasicMaterial attach="material-3" color="yellow" />
       </mesh>
     {/* L Bot*/}
-      <mesh position={[-1,-1,0]}>
+      <mesh ref={edgeB} position={[-1,-1,0]} name="LBot">
         <boxGeometry />
         <meshBasicMaterial attach="material-1" color="red" />
         <meshBasicMaterial attach="material-3" color="yellow" />
       </mesh>
     {/* R B Bot*/}
-      <mesh position={[1,-1,-1]}>
+      <mesh ref={corner7} position={[1,-1,-1]} name="RBBot">
         <boxGeometry />
         <meshBasicMaterial attach="material-0" color="orange" />
         <meshBasicMaterial attach="material-3" color="yellow" />
         <meshBasicMaterial attach="material-5" color="green" />
       </mesh>
     {/* B Bot*/}
-      <mesh position={[0,-1,-1]}>
+      <mesh ref={edgeC} position={[0,-1,-1]} name="BBot">
         <boxGeometry />
         <meshBasicMaterial attach="material-3" color="yellow" />
         <meshBasicMaterial attach="material-5" color="green" />
       </mesh>
     {/* L B Bot*/}
-      <mesh position={[-1,-1,-1]}>
+      <mesh ref={corner8} position={[-1,-1,-1]} name="LBBot">
         <boxGeometry />
         <meshBasicMaterial attach="material-1" color="red" />
         <meshBasicMaterial attach="material-3" color="yellow" />
