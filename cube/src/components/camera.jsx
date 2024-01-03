@@ -96,7 +96,9 @@ export default function Camera({model}) {
 
   let sequence = []
   let sequenceMovement = [false]
+  let predictions = []
   let keypoints;
+  let wasGesture = false;
   const classLabels = ['F','U','R', 'L','2_hand_repo_up','2_hand_repo_down'];
 
   const isMoving = (start_keypoints, finish_keypoints) => {
@@ -111,10 +113,31 @@ export default function Camera({model}) {
   }
  
   const isGesture = (sequenceMovement) => {
-    const firstFiveAllFalse = sequenceMovement.slice(0, 3).every(value => value === false);
-    const lastFiveAllFalse = sequenceMovement.slice(-3).every(value => value === false);
+    const firstFiveAllFalse = sequenceMovement.slice(0, 5).every(value => value === false);
+    const lastFiveAllFalse = sequenceMovement.slice(-5).every(value => value === false);
     const twoAreTrue = sequenceMovement.filter(value => value === true).length >= 2
     return firstFiveAllFalse && lastFiveAllFalse && twoAreTrue
+  }
+
+  function findMaxOccurrences(arr) {
+  
+    // Count occurrences
+    const counts = new Map();
+    arr.forEach(element => {
+      counts.set(element, (counts.get(element) || 0) + 1);
+    });
+  
+    // Find max occurrences
+    let maxElement = null;
+    let maxCount = 0;
+    counts.forEach((count, element) => {
+      if (count > maxCount) {
+        maxElement = element;
+        maxCount = count;
+      }
+    });
+  
+    return maxElement;
   }
 
   const extractKeypoints = (hands) => {
@@ -144,15 +167,30 @@ export default function Camera({model}) {
     sequence.push(keypoints)
     sequence = sequence.slice(-30)
     // console.log(sequenceMovement)
-    
-    if (sequence.length == 30 && isGesture(sequenceMovement)) {
+    const gesture = isGesture(sequenceMovement)
+    if (sequence.length == 30 && gesture) {
+      wasGesture = true
       const prediction = model.predict(tf.expandDims(tf.tensor(sequence),0)).argMax(1).data().then((indices) => {
         const predictedIndex = indices[0];
         const predictedClass = classLabels[predictedIndex];
         // console.log("Predicted class:", predictedClass);
-        updatePred(predictedClass)
+        predictions.push(predictedClass)
+        predictions = predictions.slice(-5)
+        console.log(predictions)
       });
+    } else if (!gesture) {
+      if (wasGesture) {
+        wasGesture = false
+        const maxClass = findMaxOccurrences(predictions)
+        if (maxClass !== null) {
+          console.log(maxClass)
+          updatePred(maxClass)
+        }
+        predictions.length = 0;
+      }
     }
+    
+    // console.log(predictions)
     updatePred(null)
     if (hands.length >0) {
     }
