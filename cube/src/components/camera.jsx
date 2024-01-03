@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
-import { useFrame } from '@react-three/fiber';
 import * as handPoseDetection from '@tensorflow-models/hand-pose-detection';
+import * as tf from '@tensorflow/tfjs';
 
 const model = handPoseDetection.SupportedModels.MediaPipeHands;
 const detectorConfig = {
@@ -19,7 +19,10 @@ const fingerLookupIndices = {
   pinky: [0, 17, 18, 19, 20],
 }; 
 
-export default function Camera() {
+const videoWidth = 500
+const videoHeight = 360
+
+export default function Camera({model}) {
   const canvasRef = useRef()
   const videoRef = useRef()
   const wrapperRef = useRef()
@@ -82,11 +85,47 @@ export default function Camera() {
     }
   }
   useEffect(() => {
-    setupCamera(500,360)
+    setupCamera(videoWidth,videoHeight)
     if (ctx) {
       onFrame()
     }
   }, [ctx])
+
+
+  let sequence = []
+  let sequenceMovement = [false]
+  let keypoints;
+  const classLabels = ['f','u','r', 'l','2_hand_repo_up','2_hand_repo_down'];
+
+  const isMoving = (start_keypoints, finish_keypoints) => {
+    const d = []
+    for (let i = 0; i < finish_keypoints.length; i++) {
+      d.push(Math.abs(finish_keypoints[i]-start_keypoints[i]))
+    }
+    if (Math.max(...d) > 0.03) {
+      return true
+    }
+    return false
+  }
+ 
+  const isGesture = (sequenceMovement) => {
+    const firstFiveAllFalse = sequenceMovement.slice(0, 3).every(value => value === false);
+    const lastFiveAllFalse = sequenceMovement.slice(-3).every(value => value === false);
+    const twoAreTrue = sequenceMovement.filter(value => value === true).length >= 2
+    return firstFiveAllFalse && lastFiveAllFalse && twoAreTrue
+  }
+
+  const extractKeypoints = (hands) => {
+    const flatten = (arr) => [].concat(...arr.map(obj => [obj.x/videoWidth, obj.y/videoHeight]));
+    // console.log(hands)
+    if (hands) {
+      const lhIndex = hands.findIndex((hand) => hand.handedness==="Right")
+      const rhIndex = hands.findIndex((hand) => hand.handedness==="Left")
+      let lh = lhIndex !== -1 ? flatten(hands[lhIndex].keypoints) : new Array (21 * 2).fill(0)
+      let rh = rhIndex !== -1 ? flatten(hands[rhIndex].keypoints) : new Array (21 * 2).fill(0)
+      return [...lh,...rh]
+    }
+  }
 
   async function onFrame() {
     ctx.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height)
@@ -95,8 +134,25 @@ export default function Camera() {
   
     // Send image data to handpose model
     const hands = await detector.estimateHands(imageData,{flipHorizontal: true});
+    keypoints = extractKeypoints(hands)
+    if (sequence.length >1) {
+      sequenceMovement.push(isMoving(keypoints, sequence[sequence.length - 2])) 
+      sequenceMovement = sequenceMovement.slice(-30)
+    }
+    sequence.push(keypoints)
+    sequence = sequence.slice(-30)
+    // console.log(sequenceMovement)
+    
+    if (sequence.length == 30 && isGesture(sequenceMovement)) {
+      const prediction = model.predict(tf.expandDims(tf.tensor(sequence),0)).argMax(1).data().then((indices) => {
+        const predictedIndex = indices[0];
+        const predictedClass = classLabels[predictedIndex];
+        console.log("Predicted class:", predictedClass);
+      });
+      // console.log(prediction)
+    }
     if (hands.length >0) {
-      // console.log(hands[0].keypoints[0].x/360,hands[0].keypoints[0].y/180)
+      // console.log(hands[0].keypoints[0].x/500,hands[0].keypoints[0].y/360)
     }
     for (let i =0; i < hands.length; i++) {
       if (hands[i].keypoints != null) {

@@ -36,7 +36,7 @@ function App() {
           <Cube />
         </Canvas>
       </KeyboardControls>
-      <Camera />
+      {model && <Camera model={model}/>}
     </>
   )
 }
