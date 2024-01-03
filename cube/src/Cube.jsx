@@ -3,11 +3,13 @@ THREE.ColorManagement.legacyMode = false
 import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
 import { useKeyboardControls } from '@react-three/drei'
+import usePrediction from './stores/usePrediction'
 
 export default function Cube() {
   const [press, setPress] = useState(true)
   const [sub, get] = useKeyboardControls()
   const three = useThree()
+  const pred = usePrediction((state) => state.pred)
 
   let groupRef = useRef()
 
@@ -68,14 +70,14 @@ export default function Cube() {
       groupRef.current.children.forEach(child => {
         child.applyMatrix4(rotationMatrix);
       });
-      console.log([...three.scene.children])
+      // console.log([...three.scene.children])
     }
   }
 
   const printChildren = () => {
     const names = []
     groupRef.current.children.forEach((child) => names.push(child.name))
-    console.log([...names])
+    // console.log([...names])
   }
 
   const handlePress = (state,axis, axisVal, rotDirection) => {
@@ -84,7 +86,7 @@ export default function Cube() {
     createGroup({name: axis, value: axisVal})
     rotateGroup(axis, rotDirection)
     printChildren()
-    console.log(state.scene.children)
+    // console.log(state.scene.children)
     setTimeout(() => setPress(true), 200)
   }
   
@@ -110,7 +112,29 @@ export default function Cube() {
   })
 
   useEffect(() => {
-    console.log(three.scene.children)
+    const unsubPred = usePrediction.subscribe(
+      (state) => state.pred,
+      (value) => {
+        // console.log(`Key${value}`)
+        if (value !== null || value !== '2_hand_repo_up' || value !== '2_hand_repo_down') {
+          const eventDown = new KeyboardEvent('keydown', {
+            key: `Key${value}`,
+          });
+          const eventUp = new KeyboardEvent('keyup', {
+            key: `Key${value}`,
+          });
+          
+          window.dispatchEvent(eventDown);
+          setTimeout(() => {
+            window.dispatchEvent(eventUp);
+          }, 100);
+          
+        }
+      }
+    )
+    return () => {
+      unsubPred()
+    }
   },[])
   return (
     // material 0 = right
