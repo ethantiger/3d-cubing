@@ -77,36 +77,34 @@ export default function Cube() {
     groupRef.current.children.forEach((child) => names.push(child.name))
     console.log([...names])
   }
+
+  const handlePress = (state,axis, axisVal, rotDirection) => {
+    setPress(false)
+    clearGroup(state)
+    createGroup({name: axis, value: axisVal})
+    rotateGroup(axis, rotDirection)
+    printChildren()
+    console.log(state.scene.children)
+    setTimeout(() => setPress(true), 200)
+  }
   
   useFrame((state,delta) => {
-    const { U, F, R } = get() 
+    const { U, F, R, L,B } = get() 
     if (press) {
       if (U) {
-        setPress(false)
-        clearGroup(state)
-        createGroup({name: 'y', value: 1})
-        rotateGroup('y', -1)
-        printChildren()
-        console.log(state.scene.children)
-        setTimeout(() => setPress(true), 200)
+        handlePress(state,'y',1,-1)
       }
       if (F) {
-        setPress(false)
-        clearGroup(state)
-        createGroup({name:'z', value:1})
-        rotateGroup('z', -1)
-        printChildren()
-        console.log(state.scene.children)
-        setTimeout(() => setPress(true), 200)
+        handlePress(state,'z',1,-1)
       }
       if (R) {
-        setPress(false)
-        clearGroup(state)
-        createGroup({name:'x', value:1})
-        rotateGroup('x', -1)
-        printChildren()
-        console.log(state.scene.children)
-        setTimeout(() => setPress(true), 200)
+        handlePress(state,'x',1,-1)
+      }
+      if (L) {
+        handlePress(state,'x',-1,1)
+      }
+      if (B) {
+        handlePress(state,'z',-1,1)
       }
     }
   })

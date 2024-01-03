@@ -9,7 +9,13 @@ function App() {
   return (
     <>
       <KeyboardControls
-        map={[{name: 'U', keys:['ArrowUp','KeyU']}, {name: 'F', keys:['KeyF']}, {name:'R', keys:['KeyR']}]}
+        map={[
+          {name: 'U', keys:['ArrowUp','KeyU']}, 
+          {name: 'F', keys:['KeyF']}, 
+          {name:'R', keys:['KeyR']}, 
+          {name:'L', keys:['KeyL']}, 
+          {name:'B', keys:['KeyB']} 
+        ]}
       >
         <Canvas camera={{position:[5,5,5]}}>
           <OrbitControls />
