@@ -1,11 +1,25 @@
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, KeyboardControls } from '@react-three/drei'
-
+import { useEffect, useState } from 'react'
+import * as tf from '@tensorflow/tfjs';
 import './App.css'
 import Cube from './cube'
+import Camera from './components/camera';
 
 function App() {
-
+  const [model, setModel] = useState(null)
+  const getModel = async () => {
+    try {
+      const loadedModel = await tf.loadLayersModel('http://localhost:3000/model.json');
+      setModel(loadedModel);
+      console.log('Model loaded successfully');
+    } catch (error) {
+      console.error('Error loading model', error);
+    }
+  }
+  useEffect(() => {
+    getModel()
+  },[])
   return (
     <>
       <KeyboardControls
@@ -20,10 +34,9 @@ function App() {
         <Canvas camera={{position:[5,5,5]}}>
           <OrbitControls />
           <Cube />
-          {/* <directionalLight position={[3,3,3]} intensity={0.5}/>
-          <ambientLight intensity={0.3}/> */}
         </Canvas>
       </KeyboardControls>
+      <Camera />
     </>
   )
 }
