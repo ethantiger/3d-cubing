@@ -113,8 +113,8 @@ export default function Camera({model}) {
   }
  
   const isGesture = (sequenceMovement) => {
-    const firstFiveAllFalse = sequenceMovement.slice(0, 5).every(value => value === false);
-    const lastFiveAllFalse = sequenceMovement.slice(-5).every(value => value === false);
+    const firstFiveAllFalse = sequenceMovement.slice(0, 3).every(value => value === false);
+    const lastFiveAllFalse = sequenceMovement.slice(-3).every(value => value === false);
     const twoAreTrue = sequenceMovement.filter(value => value === true).length >= 2
     return firstFiveAllFalse && lastFiveAllFalse && twoAreTrue
   }
@@ -181,13 +181,15 @@ export default function Camera({model}) {
     } else if (!gesture) {
       if (wasGesture) {
         wasGesture = false
-        const maxClass = findMaxOccurrences(predictions)
-        if (maxClass !== null) {
-          console.log(maxClass)
-          updatePred(maxClass)
+        if (predictions.length > 2) {
+          const maxClass = findMaxOccurrences(predictions)
+          if (maxClass !== null) {
+            console.log(maxClass)
+            updatePred(maxClass)
+          }
         }
-        predictions.length = 0;
       }
+      predictions.length = 0;
     }
     
     // console.log(predictions)
