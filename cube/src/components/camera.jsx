@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from 'react'
 import * as handPoseDetection from '@tensorflow-models/hand-pose-detection';
 import * as tf from '@tensorflow/tfjs';
+import usePrediction from '../stores/usePrediction';
 
 const model = handPoseDetection.SupportedModels.MediaPipeHands;
 const detectorConfig = {
@@ -27,6 +28,7 @@ export default function Camera({model}) {
   const videoRef = useRef()
   const wrapperRef = useRef()
   const [ctx, setCtx] = useState(null)
+  const updatePred = usePrediction((state) => state.updatePred)
 
   const setupCamera = async (videoWidth, videoHeight) => {
     setCtx(canvasRef.current.getContext('2d'))
@@ -95,7 +97,7 @@ export default function Camera({model}) {
   let sequence = []
   let sequenceMovement = [false]
   let keypoints;
-  const classLabels = ['f','u','r', 'l','2_hand_repo_up','2_hand_repo_down'];
+  const classLabels = ['F','U','R', 'L','2_hand_repo_up','2_hand_repo_down'];
 
   const isMoving = (start_keypoints, finish_keypoints) => {
     const d = []
@@ -147,12 +149,12 @@ export default function Camera({model}) {
       const prediction = model.predict(tf.expandDims(tf.tensor(sequence),0)).argMax(1).data().then((indices) => {
         const predictedIndex = indices[0];
         const predictedClass = classLabels[predictedIndex];
-        console.log("Predicted class:", predictedClass);
+        // console.log("Predicted class:", predictedClass);
+        updatePred(predictedClass)
       });
-      // console.log(prediction)
     }
+    updatePred(null)
     if (hands.length >0) {
-      // console.log(hands[0].keypoints[0].x/500,hands[0].keypoints[0].y/360)
     }
     for (let i =0; i < hands.length; i++) {
       if (hands[i].keypoints != null) {
