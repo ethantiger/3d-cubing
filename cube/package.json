@@ -15,6 +15,7 @@
     "@tensorflow-models/hand-pose-detection": "^2.0.1",
     "@tensorflow/tfjs": "^4.15.0",
     "axios": "^1.6.3",
+    "r3f-perf": "6.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "three": "^0.145.0",

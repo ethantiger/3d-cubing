@@ -10,6 +10,12 @@ export default function Cube() {
   const [sub, get] = useKeyboardControls()
   const three = useThree()
   const pred = usePrediction((state) => state.pred)
+  const [rotationInProgress, setRotationInProgress] = useState(false);
+  const [rotationAxis, setRotationAxis] = useState('')
+  const [rotationDirection, setRotationDirection] = useState(1)
+  const [rotation, setRotation] = useState(0)
+
+  const elapsedTimeRef = useRef(0)
 
   let groupRef = useRef()
 
@@ -59,19 +65,9 @@ export default function Cube() {
   }
 
   const rotateGroup = (axis,direction) => {
-
-    const axisMap = {
-      'x': new THREE.Vector3(1,0,0),
-      'y': new THREE.Vector3(0,1,0),
-      'z': new THREE.Vector3(0,0,1)
-    }
-    if (groupRef.current) {
-      const rotationMatrix = new THREE.Matrix4().makeRotationAxis(axisMap[axis],Math.PI / 2 * direction); // Adjust rotation speed
-      groupRef.current.children.forEach(child => {
-        child.applyMatrix4(rotationMatrix);
-      });
-      // console.log([...three.scene.children])
-    }
+    setRotationAxis(axis)
+    setRotationDirection(direction)
+    setRotation(0)
   }
 
   const printChildren = () => {
@@ -82,6 +78,7 @@ export default function Cube() {
 
   const handlePress = (state,axis, axisVal, rotDirection) => {
     setPress(false)
+    setRotationInProgress(true)
     clearGroup(state)
     createGroup({name: axis, value: axisVal})
     rotateGroup(axis, rotDirection)
@@ -90,23 +87,58 @@ export default function Cube() {
     setTimeout(() => setPress(true), 200)
   }
   
+  const axisMap = {
+    'x': new THREE.Vector3(1,0,0),
+    'y': new THREE.Vector3(0,1,0),
+    'z': new THREE.Vector3(0,0,1)
+  }
+  const targetRotation = Math.PI /2
   useFrame((state,delta) => {
-    const { U, F, R, L,B } = get() 
-    if (press) {
-      if (U) {
-        handlePress(state,'y',1,-1)
+    if (!rotationInProgress) {
+      const { U, F, R, L,B } = get() 
+      if (press) {
+        if (U) {
+          handlePress(state,'y',1,-1)
+        }
+        if (F) {
+          handlePress(state,'z',1,-1)
+        }
+        if (R) {
+          handlePress(state,'x',1,-1)
+        }
+        if (L) {
+          handlePress(state,'x',-1,1)
+        }
+        if (B) {
+          handlePress(state,'z',-1,1)
+        }
       }
-      if (F) {
-        handlePress(state,'z',1,-1)
-      }
-      if (R) {
-        handlePress(state,'x',1,-1)
-      }
-      if (L) {
-        handlePress(state,'x',-1,1)
-      }
-      if (B) {
-        handlePress(state,'z',-1,1)
+    } else {
+      if (groupRef.current) {
+
+        if (rotation < targetRotation) {
+          let newRotation = rotation + delta * 5
+          console.log(newRotation, rotation, targetRotation - rotation)
+          if (newRotation > targetRotation) {
+            newRotation = targetRotation - rotation
+            const rotationMatrix = new THREE.Matrix4().makeRotationAxis(axisMap[rotationAxis],newRotation * rotationDirection); // Adjust rotation speed
+            groupRef.current.children.forEach(child => {
+              child.applyMatrix4(rotationMatrix);
+            });
+            
+            setRotation(rotation + delta * 5)
+          } else {
+            const rotationMatrix = new THREE.Matrix4().makeRotationAxis(axisMap[rotationAxis],delta * 5 * rotationDirection); // Adjust rotation speed
+            groupRef.current.children.forEach(child => {
+              child.applyMatrix4(rotationMatrix);
+            });
+            setRotation(newRotation)
+          }
+        } else {
+
+          setRotationInProgress(false)
+          setRotation(0)
+        }
       }
     }
   })

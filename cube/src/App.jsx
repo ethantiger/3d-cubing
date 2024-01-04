@@ -1,9 +1,10 @@
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, KeyboardControls } from '@react-three/drei'
+import { Perf } from 'r3f-perf'
 import { useEffect, useState } from 'react'
 import * as tf from '@tensorflow/tfjs';
 import './App.css'
-import Cube from './cube'
+import Cube from './Cube';
 import Camera from './components/camera';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
         ]}
       >
         <Canvas camera={{position:[5,5,5]}}>
+          <Perf position="top-right"/>
           <OrbitControls />
           <Cube />
         </Canvas>
