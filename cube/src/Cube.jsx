@@ -13,42 +13,9 @@ export default function Cube() {
   const [rotationAxis, setRotationAxis] = useState('')
   const [rotationDirection, setRotationDirection] = useState(1)
   const [rotation, setRotation] = useState(0)
-  
   const cube = useGLTF('cube.glb')
-  // cube.scene.children.forEach((child) => three.scene.add(child))
-  // console.log(cube)
   let groupRef = useRef()
 
-  const corner1 = useRef()
-  const corner2 = useRef()
-  const corner3 = useRef()
-  const corner4 = useRef()
-  const corner5 = useRef()
-  const corner6 = useRef()
-  const corner7 = useRef()
-  const corner8 = useRef()
-
-  const edge1 = useRef()
-  const edge2 = useRef()
-  const edge3 = useRef()
-  const edge4 = useRef()
-  const edge5 = useRef()
-  const edge6 = useRef()
-  const edge7 = useRef()
-  const edge8 = useRef()
-  const edge9 = useRef()
-  const edgeA = useRef()
-  const edgeB = useRef()
-  const edgeC = useRef()
-
-  const center1 = useRef()
-  const center2 = useRef()
-  const center3 = useRef()
-  const center4 = useRef()
-  const center5 = useRef()
-  const center6 = useRef()
-
-  // const pieces = [corner1, corner2, corner3, corner4, corner5, corner6, corner7, corner8, edge1, edge2, edge3, edge4, edge5, edge6, edge7, edge8, edge9, edgeA, edgeB, edgeC, center1, center2, center3, center4, center5, center6]
   const pieces = [...cube.scene.children]
   // axis = {name: 'X', value: 1}
   const createGroup = (axis) => {
@@ -170,12 +137,6 @@ export default function Cube() {
     }
   },[])
   return (
-    // material 0 = right
-    // material 1 = left
-    // material 2 = top
-    // material 3 = bottom
-    // material 4 = front
-    // material 5 = back
     <>
       <primitive object={cube.scene}/>
       <group ref={groupRef}> </group>
