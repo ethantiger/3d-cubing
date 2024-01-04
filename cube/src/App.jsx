@@ -40,7 +40,7 @@ function App() {
           <Cube envMapIntensity={1}/>
         </Canvas>
       </KeyboardControls>
-      {/* {model && <Camera model={model}/>} */}
+      {model && <Camera model={model}/>}
     </>
   )
 }
