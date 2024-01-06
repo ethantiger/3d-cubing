@@ -25,11 +25,22 @@ function App() {
     <>
       <KeyboardControls
         map={[
-          {name: 'U', keys:['ArrowUp','KeyU']}, 
-          {name: 'F', keys:['KeyF']}, 
+          {name: 'U', keys:['KeyU']}, 
+          {name:'Uprime', keys:['KeyI']},
+          {name: 'F', keys:['KeyF']},
+          {name: 'Fprime', keys:['KeyG']}, 
           {name:'R', keys:['KeyR']}, 
+          {name:'Rprime', keys:['KeyT']}, 
           {name:'L', keys:['KeyL']}, 
-          {name:'B', keys:['KeyB']} 
+          {name:'Lprime', keys:['KeyK']}, 
+          {name:'B', keys:['KeyB']},
+          {name:'Bprime', keys:['KeyN']},
+          {name:'D', keys:['KeyD']},
+          {name:'Dprime', keys:['KeyC']},
+          {name:'Y', keys:['ArrowLeft']},
+          {name:'X', keys:['ArrowUp']},
+          {name:'Yprime', keys:['ArrowRight']},
+          {name:'Xprime', keys:['ArrowDown']}
         ]}
       >
         <Canvas camera={{position:[5,5,5]}}>
@@ -40,7 +51,7 @@ function App() {
           <Cube envMapIntensity={1}/>
         </Canvas>
       </KeyboardControls>
-      {model && <Camera model={model}/>}
+      {/* {model && <Camera model={model}/>} */}
     </>
   )
 }
