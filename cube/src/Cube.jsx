@@ -19,6 +19,10 @@ export default function Cube() {
   const pieces = [...cube.scene.children]
   // axis = {name: 'X', value: 1}
   const createGroup = (axis) => {
+    if (axis.value === 'all') {
+      pieces.forEach((piece) => groupRef.current.add(piece))
+      return
+    } 
     pieces.forEach((piece) => {
       Math.round(piece.position[axis.name]) === axis.value ? groupRef.current.add(piece) : null
     })
@@ -58,28 +62,29 @@ export default function Cube() {
   const axisMap = {
     'x': new THREE.Vector3(1,0,0),
     'y': new THREE.Vector3(0,1,0),
-    'z': new THREE.Vector3(0,0,1)
+    'z': new THREE.Vector3(0,0,1),
   }
   const targetRotation = Math.PI /2
   useFrame((state,delta) => {
     if (!rotationInProgress) {
-      const { U, F, R, L,B } = get() 
+      const { U, Uprime, F,Fprime, R,Rprime, L,Lprime,B,Bprime, D,Dprime, Y, X, Yprime, Xprime } = get() 
       if (press) {
-        if (U) {
-          handlePress(state,'y',1,-1)
-        }
-        if (F) {
-          handlePress(state,'z',1,-1)
-        }
-        if (R) {
-          handlePress(state,'x',1,-1)
-        }
-        if (L) {
-          handlePress(state,'x',-1,1)
-        }
-        if (B) {
-          handlePress(state,'z',-1,1)
-        }
+        if (U) handlePress(state,'y',1,-1)
+        if (Uprime) handlePress(state, 'y',1,1)
+        if (F) handlePress(state,'z',1,-1)
+        if (Fprime) handlePress(state,'z',1,1)
+        if (R) handlePress(state,'x',1,-1)
+        if (Rprime) handlePress(state,'x',1,1)
+        if (L) handlePress(state,'x',-1,1)
+        if (Lprime) handlePress(state,'x',-1,-1)
+        if (B) handlePress(state,'z',-1,1)
+        if (Bprime) handlePress(state,'z',-1,-1)
+        if (D) handlePress(state,'y',-1,1)
+        if (Dprime) handlePress(state,'y',-1,-1)
+        if (Y) handlePress(state,'y','all',-1)
+        if (X) handlePress(state, 'x', 'all', -1)
+        if (Yprime) handlePress(state, 'y', 'all', 1)
+        if (Xprime) handlePress(state, 'x', 'all', 1)
       }
     } else {
       if (groupRef.current) {
@@ -103,7 +108,6 @@ export default function Cube() {
             setRotation(newRotation)
           }
         } else {
-
           setRotationInProgress(false)
           setRotation(0)
         }
@@ -139,7 +143,7 @@ export default function Cube() {
   return (
     <>
       <primitive object={cube.scene}/>
-      <group ref={groupRef}> </group>
+      <group ref={groupRef} />
     </>
   )
 }

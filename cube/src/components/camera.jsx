@@ -31,7 +31,7 @@ export default function Camera({model}) {
   const updatePred = usePrediction((state) => state.updatePred)
 
   const setupCamera = async (videoWidth, videoHeight) => {
-    setCtx(canvasRef.current.getContext('2d'))
+    setCtx(canvasRef.current.getContext('2d', {willReadFrequently: true}))
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       throw new Error(
           'Browser API navigator.mediaDevices.getUserMedia not available');
