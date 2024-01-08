@@ -11,7 +11,7 @@ function App() {
   const [model, setModel] = useState(null)
   const getModel = async () => {
     try {
-      const loadedModel = await tf.loadLayersModel('http://localhost:3000/model.json');
+      const loadedModel = await tf.loadLayersModel('https://3d-cube-server.vercel.app/model.json');
       setModel(loadedModel);
       console.log('Model loaded successfully');
     } catch (error) {
