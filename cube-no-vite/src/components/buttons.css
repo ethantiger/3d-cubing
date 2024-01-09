@@ -9,6 +9,9 @@ button {
   border:solid; 
   transition: transform 0.3s ease;
   user-select:none;
+  display: flex;       /* Enables Flexbox */
+  align-items: center; /* Centers vertically */
+  justify-content: center; /* Centers horizontally */
 }
 
 button:hover {
@@ -23,6 +26,10 @@ button:hover {
   bottom:100px;
 }
 
-.info-button {
+.random-button {
   bottom:160px;
+}
+
+.info-button {
+  bottom:220px;
 }

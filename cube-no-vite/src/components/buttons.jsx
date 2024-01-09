@@ -8,6 +8,9 @@ export default function Buttons({setCamera}) {
     <button className="info-button" type="button">
       <img src="info.svg" alt="Info Icon" width="24" height="24" />
     </button>
+    <button className="random-button" type="button">
+        <img src="random.svg" alt="Random Icon" width="35" height="35" />
+    </button>
     <button className="reset-button" type="button">
         <img src="reset.svg" alt="Reset Icon" width="24" height="24" />
     </button>
