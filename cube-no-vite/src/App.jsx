@@ -1,19 +1,16 @@
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, KeyboardControls, Environment, ContactShadows, Html } from '@react-three/drei'
+import { OrbitControls, KeyboardControls, Environment, ContactShadows, Html, Text } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
 import { useEffect, useState } from 'react'
 import * as tf from '@tensorflow/tfjs';
 import './App.css'
 import Cube from './Cube';
 import Camera from './components/camera';
+import Buttons from './components/buttons';
 
 function App() {
   const [model, setModel] = useState(null)
   const [camera, setCamera] = useState(false)
-
-  const handleClick = () => {
-    setCamera(!camera)
-  }
 
   const getModel = async () => {
     try {
@@ -57,9 +54,7 @@ function App() {
           <Cube envMapIntensity={1}/>
         </Canvas>
       </KeyboardControls>
-      <button className="camera-button" type="button" onClick={handleClick}>
-        <img src="camera.svg" alt="Camera Icon" width="24" height="24" />
-      </button>
+      <Buttons setCamera={setCamera}></Buttons>
       {camera && model && <Camera model={model}/>}
     </>
   )
