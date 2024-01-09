@@ -1,15 +1,16 @@
 import { useRef, useEffect, useState } from 'react'
 import * as handPoseDetection from '@tensorflow-models/hand-pose-detection';
 import * as tf from '@tensorflow/tfjs';
+import * as mpHands from '@mediapipe/hands'
 import usePrediction from '../stores/usePrediction';
 
-const model = handPoseDetection.SupportedModels.MediaPipeHands;
+const handModel = handPoseDetection.SupportedModels.MediaPipeHands;
 const detectorConfig = {
   runtime: 'mediapipe', // or 'tfjs',
-  solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/hands',
+  solutionPath: `https://cdn.jsdelivr.net/npm/@mediapipe/hands@${mpHands.VERSION}`,
   modelType: 'full'
 }
-const detector = await handPoseDetection.createDetector(model, detectorConfig);
+const detector = await handPoseDetection.createDetector(handModel, detectorConfig);
 
 
 const fingerLookupIndices = {
@@ -30,6 +31,7 @@ export default function Camera({model}) {
   const [ctx, setCtx] = useState(null)
   const updatePred = usePrediction((state) => state.updatePred)
 
+ 
   const setupCamera = async (videoWidth, videoHeight) => {
     setCtx(canvasRef.current.getContext('2d', {willReadFrequently: true}))
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -87,6 +89,7 @@ export default function Camera({model}) {
     }
   }
   useEffect(() => {
+    // setupDetector()
     setupCamera(videoWidth,videoHeight)
     if (ctx) {
       onFrame()
