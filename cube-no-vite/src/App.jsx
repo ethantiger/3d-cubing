@@ -55,10 +55,11 @@ function App() {
           <Environment files={'brown_photostudio_02_4k.hdr'}/>
           <ContactShadows position={[0,-5,0]} resolution={512} opacity={0.4} blur={3} frames={1}/>
           <Cube envMapIntensity={1}/>
-          <Html><input type="button" onClick={handleClick} /></Html>
         </Canvas>
       </KeyboardControls>
-      
+      <button className="camera-button" type="button" onClick={handleClick}>
+        <img src="camera.svg" alt="Camera Icon" width="24" height="24" />
+      </button>
       {camera && model && <Camera model={model}/>}
     </>
   )

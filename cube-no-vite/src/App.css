@@ -1,0 +1,16 @@
+.camera-button {
+  width: 50px; 
+  height: 50px; 
+  position:absolute; 
+  bottom:40px; 
+  right:40px;
+  border-radius:50%;
+  background: none;  /* Removes background styles */
+  color: inherit;    /* Inherits the color from its parent */
+  border:solid; 
+  transition: transform 0.3s ease;
+}
+.camera-button:hover {
+  background: #EEE;
+  transform: scale(1.1);
+}
