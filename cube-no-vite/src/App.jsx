@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, KeyboardControls, Environment, ContactShadows } from '@react-three/drei'
+import { OrbitControls, KeyboardControls, Environment, ContactShadows, Html } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
 import { useEffect, useState } from 'react'
 import * as tf from '@tensorflow/tfjs';
@@ -9,6 +9,12 @@ import Camera from './components/camera';
 
 function App() {
   const [model, setModel] = useState(null)
+  const [camera, setCamera] = useState(false)
+
+  const handleClick = () => {
+    setCamera(!camera)
+  }
+
   const getModel = async () => {
     try {
       const loadedModel = await tf.loadLayersModel('https://3d-cube-server.vercel.app/model.json');
@@ -49,9 +55,11 @@ function App() {
           <Environment files={'brown_photostudio_02_4k.hdr'}/>
           <ContactShadows position={[0,-5,0]} resolution={512} opacity={0.4} blur={3} frames={1}/>
           <Cube envMapIntensity={1}/>
+          <Html><input type="button" onClick={handleClick} /></Html>
         </Canvas>
       </KeyboardControls>
-      {model && <Camera model={model}/>}
+      
+      {camera && model && <Camera model={model}/>}
     </>
   )
 }
