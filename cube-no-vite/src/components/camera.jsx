@@ -106,7 +106,7 @@ export default function Camera({model}) {
   let predictions = []
   let keypoints;
   let wasGesture = false;
-  const classLabels = ['F','U','R', 'L','2_hand_repo_up','2_hand_repo_down'];
+  const classLabels = ['F','U','R', 'L','2_hand_repo_up','2_hand_repo_down','B','D','X','Y','X-prime','Y-prime'];
 
   const isMoving = (start_keypoints, finish_keypoints) => {
     const d = []

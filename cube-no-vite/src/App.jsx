@@ -14,7 +14,7 @@ function App() {
 
   const getModel = async () => {
     try {
-      const loadedModel = await tf.loadLayersModel('https://3d-cube-server.vercel.app/model.json');
+      const loadedModel = await tf.loadLayersModel('http://localhost:3001/model.json');
       setModel(loadedModel);
       console.log('Model loaded successfully');
     } catch (error) {
@@ -40,10 +40,10 @@ function App() {
           {name:'Bprime', keys:['KeyN']},
           {name:'D', keys:['KeyD']},
           {name:'Dprime', keys:['KeyC']},
-          {name:'Y', keys:['ArrowLeft']},
-          {name:'X', keys:['ArrowUp']},
-          {name:'Yprime', keys:['ArrowRight']},
-          {name:'Xprime', keys:['ArrowDown']}
+          {name:'Y', keys:['ArrowLeft', 'KeyY']},
+          {name:'X', keys:['ArrowUp', 'KeyX']},
+          {name:'Yprime', keys:['ArrowRight', 'KeyZ']},
+          {name:'Xprime', keys:['ArrowDown', 'KeyX']}
         ]}
       >
         <Canvas camera={{position:[5,5,5]}}>

@@ -165,7 +165,6 @@ export default function Cube() {
       (state) => state.pred,
       (value) => {
         if (value !== null && value !== '2_hand_repo_up' && value !== '2_hand_repo_down') {
-          console.log(value)
           setLastPrediction(value)
           const eventDown = new KeyboardEvent('keydown', {
             key: `Key${value}`,
