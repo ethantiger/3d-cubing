@@ -160,6 +160,11 @@ export default function Camera({model}) {
   }
 
   async function onFrame() {
+    const state = usePrediction.getState()
+    if (state.shuffle) {  // Prevent weird rotations when camera is in use and shuffling
+      requestID.current = requestAnimationFrame(onFrame)
+      return
+    }
     ctx.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height)
     // Get image data from canvas
     const imageData = ctx.getImageData(0, 0, canvasRef.current.width, canvasRef.current.height);
