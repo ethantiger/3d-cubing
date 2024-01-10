@@ -1,6 +1,8 @@
 import './buttons.css'
+import usePrediction from '../stores/usePrediction'
 
 export default function Buttons({setCamera}) {
+  const changeReset = usePrediction((state) => state.changeReset)
   const handleCameraClick = () => {
     setCamera((camera) => !camera)
   }
@@ -11,7 +13,7 @@ export default function Buttons({setCamera}) {
     <button className="random-button" type="button">
         <img src="random.svg" alt="Random Icon" width="35" height="35" />
     </button>
-    <button className="reset-button" type="button">
+    <button className="reset-button" type="button" onClick={changeReset}>
         <img src="reset.svg" alt="Reset Icon" width="24" height="24" />
     </button>
     <button className="camera-button" type="button" onClick={handleCameraClick}>
