@@ -24,6 +24,8 @@ export default function Cube() {
   let groupRef = useRef()
 
   const changeReset = usePrediction((state) => state.changeReset)
+  const endShuffle = usePrediction((state) => state.endShuffle)
+  const shuffle = usePrediction((state) => state.shuffle)
 
   const pieces = [...cube.scene.children]
   // axis = {name: 'X', value: 1}
@@ -52,18 +54,43 @@ export default function Cube() {
     setRotation(0)
   }
 
-  const printChildren = () => {
-    const names = []
-    groupRef.current.children.forEach((child) => names.push(child.name))
+  const resetCube = () => {
+    const state = usePrediction.getState()
+    if (!state.shuffle) {
+      changeReset(false)
+      clearGroup(three)
+      three.scene.children[2].children.forEach((child) => {
+        child.rotation.set(0,0,0)
+        child.position.set(...originalPosition[parseInt(child.name.slice(-2)) - 1])
+      })
+    }
   }
 
-  const resetCube = () => {
-    changeReset(false)
-    clearGroup(three)
-    three.scene.children[2].children.forEach((child) => {
-      child.rotation.set(0,0,0)
-      child.position.set(...originalPosition[parseInt(child.name.slice(-2)) - 1])
-    })
+  const createRandomArray = (size, values) => {
+    const randomArray = [];
+    for (let i = 0; i < size; i++) {
+        const randomIndex = Math.floor(Math.random() * values.length);
+        randomArray.push(values[randomIndex]);
+    }
+    return randomArray;
+  }
+
+  const shuffleCube = () => {
+    const moves = 20
+    const axisArray = createRandomArray(moves,['x','y','z'])
+    const axisValArray = createRandomArray(moves,[-1,0,1])
+    const rotDirectionArray = createRandomArray(moves,[1,-1])
+    let i = 0
+    const interval = setInterval(() => {
+      if (i < moves){
+        handlePress(three,axisArray[i],axisValArray[i],rotDirectionArray[i])
+        i++
+      } else {
+        clearInterval(interval)
+        endShuffle()
+      }
+    },350)
+    
   }
 
   const handlePress = (state,axis, axisVal, rotDirection) => {
@@ -155,9 +182,16 @@ export default function Cube() {
         if (value) resetCube()
       }
     )
+    const unsubShuffle = usePrediction.subscribe(
+      (state) => state.shuffle,
+      (value) => {
+        if (value) shuffleCube()
+      }
+    )
     return () => {
       unsubPred()
       unsubReset()
+      unsubShuffle()
     }
   },[rotation])
   return (
