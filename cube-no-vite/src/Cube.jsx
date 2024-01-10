@@ -11,6 +11,7 @@ const originalPosition = [
   [1,1,1],[-1,1,1],[0,-1,0],[1,-1,0],[-1,-1,0],
   [0,-1,-1],[1,-1,-1],[-1,-1,-1],[0,-1,1],[1,-1,1],[-1,-1,1]
 ]
+
 export default function Cube() {
   const [press, setPress] = useState(true)
   const [rotationInProgress, setRotationInProgress] = useState(false);
@@ -25,8 +26,10 @@ export default function Cube() {
 
   const changeReset = usePrediction((state) => state.changeReset)
   const endShuffle = usePrediction((state) => state.endShuffle)
-  const shuffle = usePrediction((state) => state.shuffle)
-
+  
+  let sceneIndex = 1
+  if (window.location.hash === '#perf') sceneIndex = 2
+  
   const pieces = [...cube.scene.children]
   // axis = {name: 'X', value: 1}
   const createGroup = (axis) => {
@@ -43,7 +46,7 @@ export default function Cube() {
     for (let i = groupRef.current.children.length - 1; i >= 0; i--) {
       const child = groupRef.current.children[i];
       groupRef.current.remove(child);
-      state.scene.children[2].add(child);
+      state.scene.children[sceneIndex].add(child);
       pieces.push(child)
     }
   }
@@ -59,7 +62,7 @@ export default function Cube() {
     if (!state.shuffle) {
       changeReset(false)
       clearGroup(three)
-      three.scene.children[2].children.forEach((child) => {
+      three.scene.children[sceneIndex].children.forEach((child) => {
         child.rotation.set(0,0,0)
         child.position.set(...originalPosition[parseInt(child.name.slice(-2)) - 1])
       })
