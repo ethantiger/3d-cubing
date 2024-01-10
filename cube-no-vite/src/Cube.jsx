@@ -2,7 +2,7 @@ import *  as THREE from 'three'
 THREE.ColorManagement.legacyMode = false
 import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
-import { useKeyboardControls, useGLTF } from '@react-three/drei'
+import { useKeyboardControls, useGLTF, Text } from '@react-three/drei'
 import usePrediction from './stores/usePrediction'
 const originalPosition = [
   [1,0,0],[-1,0,0],[0,0,-1],[1,0,-1],[-1,0,-1],
@@ -18,6 +18,7 @@ export default function Cube() {
   const [rotationAxis, setRotationAxis] = useState('')
   const [rotationDirection, setRotationDirection] = useState(1)
   const [rotation, setRotation] = useState(0)
+  const [lastPrediction, setLastPrediction] = useState('')
   const [sub, get] = useKeyboardControls()
   const three = useThree()
 
@@ -104,7 +105,7 @@ export default function Cube() {
     rotateGroup(axis, rotDirection)
     setTimeout(() => setPress(true), 200)
   }
-  
+
   const axisMap = {
     'x': new THREE.Vector3(1,0,0),
     'y': new THREE.Vector3(0,1,0),
@@ -143,9 +144,8 @@ export default function Cube() {
             groupRef.current.children.forEach(child => {
               child.applyMatrix4(rotationMatrix);
             });
-            
             setRotation(rotation + delta * 5)
-          } else {
+          } else {           
             const rotationMatrix = new THREE.Matrix4().makeRotationAxis(axisMap[rotationAxis],delta * 5 * rotationDirection); // Adjust rotation speed
             groupRef.current.children.forEach(child => {
               child.applyMatrix4(rotationMatrix);
@@ -164,7 +164,9 @@ export default function Cube() {
     const unsubPred = usePrediction.subscribe(
       (state) => state.pred,
       (value) => {
-        if (value !== null || value !== '2_hand_repo_up' || value !== '2_hand_repo_down') {
+        if (value !== null && value !== '2_hand_repo_up' && value !== '2_hand_repo_down') {
+          console.log(value)
+          setLastPrediction(value)
           const eventDown = new KeyboardEvent('keydown', {
             key: `Key${value}`,
           });
@@ -201,6 +203,7 @@ export default function Cube() {
     <>
       <primitive object={cube.scene}/>
       <group ref={groupRef} name="rotation-group" />
+      <Text fontSize={5} position={[5,-5,-5]} rotation={[-Math.PI/2,0,Math.PI/4]} color="black">{lastPrediction}</Text>
     </>
   )
 }
