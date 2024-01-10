@@ -4,18 +4,32 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
 import { useKeyboardControls, useGLTF } from '@react-three/drei'
 import usePrediction from './stores/usePrediction'
+const originalPosition = [
+  [1,0,0],[-1,0,0],[0,0,-1],[1,0,-1],[-1,0,-1],
+  [0,0,1],[1,0,1],[-1,0,1],[0,1,0],[1,1,0],
+  [-1,1,0],[0,1,-1],[1,1,-1],[-1,1,-1],[0,1,1],
+  [1,1,1],[-1,1,1],[0,-1,0],[1,-1,0],[-1,-1,0],
+  [0,-1,-1],[1,-1,-1],[-1,-1,-1],[0,-1,1],[1,-1,1],[-1,-1,1]
+]
 
 export default function Cube() {
   const [press, setPress] = useState(true)
-  const [sub, get] = useKeyboardControls()
-  const three = useThree()
   const [rotationInProgress, setRotationInProgress] = useState(false);
   const [rotationAxis, setRotationAxis] = useState('')
   const [rotationDirection, setRotationDirection] = useState(1)
   const [rotation, setRotation] = useState(0)
+  const [sub, get] = useKeyboardControls()
+  const three = useThree()
+
   const cube = useGLTF('cube.glb')
   let groupRef = useRef()
 
+  const changeReset = usePrediction((state) => state.changeReset)
+  const endShuffle = usePrediction((state) => state.endShuffle)
+  
+  let sceneIndex = 1
+  if (window.location.hash === '#perf') sceneIndex = 2
+  
   const pieces = [...cube.scene.children]
   // axis = {name: 'X', value: 1}
   const createGroup = (axis) => {
@@ -32,7 +46,7 @@ export default function Cube() {
     for (let i = groupRef.current.children.length - 1; i >= 0; i--) {
       const child = groupRef.current.children[i];
       groupRef.current.remove(child);
-      state.scene.children[2].add(child);
+      state.scene.children[sceneIndex].add(child);
       pieces.push(child)
     }
   }
@@ -43,10 +57,43 @@ export default function Cube() {
     setRotation(0)
   }
 
-  const printChildren = () => {
-    const names = []
-    groupRef.current.children.forEach((child) => names.push(child.name))
-    // console.log([...names])
+  const resetCube = () => {
+    const state = usePrediction.getState()
+    if (!state.shuffle) {
+      changeReset(false)
+      clearGroup(three)
+      three.scene.children[sceneIndex].children.forEach((child) => {
+        child.rotation.set(0,0,0)
+        child.position.set(...originalPosition[parseInt(child.name.slice(-2)) - 1])
+      })
+    }
+  }
+
+  const createRandomArray = (size, values) => {
+    const randomArray = [];
+    for (let i = 0; i < size; i++) {
+        const randomIndex = Math.floor(Math.random() * values.length);
+        randomArray.push(values[randomIndex]);
+    }
+    return randomArray;
+  }
+
+  const shuffleCube = () => {
+    const moves = 20
+    const axisArray = createRandomArray(moves,['x','y','z'])
+    const axisValArray = createRandomArray(moves,[-1,0,1])
+    const rotDirectionArray = createRandomArray(moves,[1,-1])
+    let i = 0
+    const interval = setInterval(() => {
+      if (i < moves){
+        handlePress(three,axisArray[i],axisValArray[i],rotDirectionArray[i])
+        i++
+      } else {
+        clearInterval(interval)
+        endShuffle()
+      }
+    },350)
+    
   }
 
   const handlePress = (state,axis, axisVal, rotDirection) => {
@@ -55,7 +102,6 @@ export default function Cube() {
     clearGroup(state)
     createGroup({name: axis, value: axisVal})
     rotateGroup(axis, rotDirection)
-    // console.log(cube.scene.children)
     setTimeout(() => setPress(true), 200)
   }
   
@@ -91,7 +137,6 @@ export default function Cube() {
 
         if (rotation < targetRotation) {
           let newRotation = rotation + delta * 5
-          // console.log(newRotation, rotation, targetRotation - rotation)
           if (newRotation > targetRotation) {
             newRotation = targetRotation - rotation
             const rotationMatrix = new THREE.Matrix4().makeRotationAxis(axisMap[rotationAxis],newRotation * rotationDirection); // Adjust rotation speed
@@ -119,7 +164,6 @@ export default function Cube() {
     const unsubPred = usePrediction.subscribe(
       (state) => state.pred,
       (value) => {
-        // console.log(`Key${value}`)
         if (value !== null || value !== '2_hand_repo_up' || value !== '2_hand_repo_down') {
           const eventDown = new KeyboardEvent('keydown', {
             key: `Key${value}`,
@@ -131,19 +175,32 @@ export default function Cube() {
           window.dispatchEvent(eventDown);
           setTimeout(() => {
             window.dispatchEvent(eventUp);
-          }, 100);
-          
+          }, 100); 
         }
+      }
+    )
+    const unsubReset = usePrediction.subscribe(
+      (state) => state.reset,
+      (value) => {
+        if (value) resetCube()
+      }
+    )
+    const unsubShuffle = usePrediction.subscribe(
+      (state) => state.shuffle,
+      (value) => {
+        if (value) shuffleCube()
       }
     )
     return () => {
       unsubPred()
+      unsubReset()
+      unsubShuffle()
     }
-  },[])
+  },[rotation])
   return (
     <>
       <primitive object={cube.scene}/>
-      <group ref={groupRef} />
+      <group ref={groupRef} name="rotation-group" />
     </>
   )
 }

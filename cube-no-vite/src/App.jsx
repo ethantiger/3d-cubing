@@ -6,9 +6,12 @@ import * as tf from '@tensorflow/tfjs';
 import './App.css'
 import Cube from './Cube';
 import Camera from './components/camera';
+import Buttons from './components/buttons';
 
 function App() {
   const [model, setModel] = useState(null)
+  const [camera, setCamera] = useState(false)
+
   const getModel = async () => {
     try {
       const loadedModel = await tf.loadLayersModel('https://3d-cube-server.vercel.app/model.json');
@@ -44,14 +47,15 @@ function App() {
         ]}
       >
         <Canvas camera={{position:[5,5,5]}}>
-          <Perf position="top-right"/>
+          {window.location.hash === '#perf' && <Perf position="top-right"/>}
           <OrbitControls />
           <Environment files={'brown_photostudio_02_4k.hdr'}/>
           <ContactShadows position={[0,-5,0]} resolution={512} opacity={0.4} blur={3} frames={1}/>
           <Cube envMapIntensity={1}/>
         </Canvas>
       </KeyboardControls>
-      {model && <Camera model={model}/>}
+      <Buttons setCamera={setCamera}></Buttons>
+      {camera && model && <Camera model={model}/>}
     </>
   )
 }

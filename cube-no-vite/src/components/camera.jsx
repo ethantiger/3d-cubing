@@ -28,6 +28,7 @@ export default function Camera({model}) {
   const canvasRef = useRef()
   const videoRef = useRef()
   const wrapperRef = useRef()
+  const requestID = useRef()
   const [ctx, setCtx] = useState(null)
   const updatePred = usePrediction((state) => state.updatePred)
 
@@ -92,7 +93,10 @@ export default function Camera({model}) {
     // setupDetector()
     setupCamera(videoWidth,videoHeight)
     if (ctx) {
-      onFrame()
+      requestID.current = requestAnimationFrame(onFrame)
+    }
+    return () => {
+      cancelAnimationFrame(requestID.current)
     }
   }, [ctx])
 
@@ -204,7 +208,7 @@ export default function Camera({model}) {
         drawKeypoints(hands[i].keypoints, hands[i].handedness)
       }
     }
-    requestAnimationFrame(onFrame)
+    requestID.current = requestAnimationFrame(onFrame)
   }
 
   return (
