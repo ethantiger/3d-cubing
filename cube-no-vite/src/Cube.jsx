@@ -93,7 +93,7 @@ export default function Cube() {
         clearInterval(interval)
         endShuffle()
       }
-    },350)
+    },250)
     
   }
 
@@ -137,16 +137,16 @@ export default function Cube() {
       if (groupRef.current) {
 
         if (rotation < targetRotation) {
-          let newRotation = rotation + delta * 5
+          let newRotation = rotation + delta * 8
           if (newRotation > targetRotation) {
             newRotation = targetRotation - rotation
             const rotationMatrix = new THREE.Matrix4().makeRotationAxis(axisMap[rotationAxis],newRotation * rotationDirection); // Adjust rotation speed
             groupRef.current.children.forEach(child => {
               child.applyMatrix4(rotationMatrix);
             });
-            setRotation(rotation + delta * 5)
+            setRotation(rotation + delta * 8)
           } else {           
-            const rotationMatrix = new THREE.Matrix4().makeRotationAxis(axisMap[rotationAxis],delta * 5 * rotationDirection); // Adjust rotation speed
+            const rotationMatrix = new THREE.Matrix4().makeRotationAxis(axisMap[rotationAxis],delta * 8 * rotationDirection); // Adjust rotation speed
             groupRef.current.children.forEach(child => {
               child.applyMatrix4(rotationMatrix);
             });
