@@ -24,7 +24,7 @@ const fingerLookupIndices = {
 const videoWidth = 500
 const videoHeight = 360
 
-export default function Camera({model}) {
+export default function Camera({leftModel, rightModel}) {
   const canvasRef = useRef()
   const videoRef = useRef()
   const wrapperRef = useRef()
@@ -101,12 +101,17 @@ export default function Camera({model}) {
   }, [ctx])
 
 
-  let sequence = []
-  let sequenceMovement = [false]
-  let predictions = []
+  let sequenceR = []
+  let  sequenceL = []
+  let sequenceMovementR = [false]
+  let sequenceMovementL = [false]
+  let predictionsR = []
+  let predictionsL = []
   let keypoints;
-  let wasGesture = false;
-  const classLabels = ['F','U','R', 'L','2_hand_repo_up','2_hand_repo_down','B','D','X','Y','X-prime','Y-prime'];
+  let wasGestureR = false;
+  let wasGestureL = false
+  const classLabelsR = ['F','U','R','X','Y','r_repo_down','r_repo_up','r_onscreen'];
+  const classLabelsL = ['L','B','D','Z','l_repo_down','l_repo_up','l_onscreen'];
 
   const isMoving = (start_keypoints, finish_keypoints) => {
     const d = []
@@ -155,7 +160,7 @@ export default function Camera({model}) {
       const rhIndex = hands.findIndex((hand) => hand.handedness==="Left")
       let lh = lhIndex !== -1 ? flatten(hands[lhIndex].keypoints) : new Array (21 * 2).fill(0)
       let rh = rhIndex !== -1 ? flatten(hands[rhIndex].keypoints) : new Array (21 * 2).fill(0)
-      return [...lh,...rh]
+      return {left:lh, right:rh}
     }
   }
 
@@ -172,47 +177,80 @@ export default function Camera({model}) {
     // Send image data to handpose model
     const hands = await detector.estimateHands(imageData,{flipHorizontal: true});
     keypoints = extractKeypoints(hands)
-    if (sequence.length >1) {
-      sequenceMovement.push(isMoving(keypoints, sequence[sequence.length - 2])) 
-      sequenceMovement = sequenceMovement.slice(-30)
+
+    // RIGHT HAND
+    if (sequenceR.length >1) {
+      sequenceMovementR.push(isMoving(keypoints.right, sequenceR[sequenceR.length - 2])) 
+      sequenceMovementR = sequenceMovementR.slice(-30)
     }
-    sequence.push(keypoints)
-    sequence = sequence.slice(-30)
-    // console.log(sequenceMovement)
-    const gesture = isGesture(sequenceMovement)
-    if (sequence.length == 30 && gesture) {
-      wasGesture = true
-      const prediction = model.predict(tf.expandDims(tf.tensor(sequence),0)).argMax(1).data().then((indices) => {
+    sequenceR.push(keypoints.right)
+    sequenceR = sequenceR.slice(-30)
+    // console.log(sequenceMovementR)
+    const gestureR = isGesture(sequenceMovementR)
+    if (sequenceR.length == 30 && gestureR) {
+      wasGestureR = true
+      const prediction = rightModel.predict(tf.expandDims(tf.tensor(sequenceR),0)).argMax(1).data().then((indices) => {
         const predictedIndex = indices[0];
-        const predictedClass = classLabels[predictedIndex];
+        const predictedClass = classLabelsR[predictedIndex];
         // console.log("Predicted class:", predictedClass);
-        predictions.push(predictedClass)
-        predictions = predictions.slice(-5)
-        console.log(predictions)
+        predictionsR.push(predictedClass)
+        predictionsR = predictionsR.slice(-10)
+        console.log(predictionsR)
       });
-    } else if (!gesture) {
-      if (wasGesture) {
-        wasGesture = false
-        if (predictions.length > 2) {
-          const maxClass = findMaxOccurrences(predictions)
+    } else if (!gestureR) {
+      if (wasGestureR) {
+        wasGestureR = false
+        if (predictionsR.length > 2) {
+          const maxClass = findMaxOccurrences(predictionsR)
           if (maxClass !== null) {
             console.log(maxClass)
             updatePred(maxClass)
           }
         }
       }
-      predictions.length = 0;
+      predictionsR.length = 0;
+    }
+    // LEFT HAND
+    if (sequenceL.length >1) {
+      sequenceMovementL.push(isMoving(keypoints.left, sequenceL[sequenceL.length - 2])) 
+      sequenceMovementL = sequenceMovementL.slice(-30)
+    }
+    sequenceL.push(keypoints.left)
+    sequenceL = sequenceL.slice(-30)
+    // console.log(sequenceMovementR)
+    const gestureL = isGesture(sequenceMovementL)
+    if (sequenceL.length == 30 && gestureL) {
+      wasGestureL = true
+      const prediction = leftModel.predict(tf.expandDims(tf.tensor(sequenceL),0)).argMax(1).data().then((indices) => {
+        const predictedIndex = indices[0];
+        const predictedClass = classLabelsL[predictedIndex];
+        // console.log("Predicted class:", predictedClass);
+        predictionsL.push(predictedClass)
+        predictionsL = predictionsL.slice(-10)
+        console.log(predictionsL)
+      });
+    } else if (!gestureL) {
+      if (wasGestureL) {
+        wasGestureL = false
+        if (predictionsL.length > 2) {
+          const maxClass = findMaxOccurrences(predictionsL)
+          if (maxClass !== null) {
+            console.log(maxClass)
+            updatePred(maxClass)
+          }
+        }
+      }
+      predictionsL.length = 0;
     }
     
-    // console.log(predictions)
+
+    // console.log(predictionsR)
     updatePred(null)
-    if (hands.length >0) {
-    }
-    for (let i =0; i < hands.length; i++) {
-      if (hands[i].keypoints != null) {
-        drawKeypoints(hands[i].keypoints, hands[i].handedness)
-      }
-    }
+    // for (let i =0; i < hands.length; i++) {
+    //   if (hands[i].keypoints != null) {
+    //     drawKeypoints(hands[i].keypoints, hands[i].handedness)
+    //   }
+    // }
     requestID.current = requestAnimationFrame(onFrame)
   }
 

@@ -9,20 +9,28 @@ import Camera from './components/camera';
 import Buttons from './components/buttons';
 
 function App() {
-  const [model, setModel] = useState(null)
+  const [leftModel, setLeftModel] = useState(null)
+  const [rightModel, setRightModel] = useState(null)
   const [camera, setCamera] = useState(false)
 
-  const getModel = async () => {
+  const getModels = async () => {
     try {
-      const loadedModel = await tf.loadLayersModel('http://localhost:3001/model.json');
-      setModel(loadedModel);
+      const loadedModel = await tf.loadLayersModel('http://localhost:3001/lefthand/model.json');
+      setLeftModel(loadedModel);
+      console.log('Model loaded successfully');
+    } catch (error) {
+      console.error('Error loading model', error);
+    }
+    try {
+      const loadedModel = await tf.loadLayersModel('http://localhost:3001/righthand/model.json');
+      setRightModel(loadedModel);
       console.log('Model loaded successfully');
     } catch (error) {
       console.error('Error loading model', error);
     }
   }
   useEffect(() => {
-    getModel()
+    getModels()
   },[])
   return (
     <>
@@ -55,7 +63,7 @@ function App() {
         </Canvas>
       </KeyboardControls>
       <Buttons setCamera={setCamera}></Buttons>
-      {camera && model && <Camera model={model}/>}
+      {camera && leftModel && rightModel && <Camera leftModel={leftModel} rightModel={rightModel}/>}
     </>
   )
 }
