@@ -15,14 +15,14 @@ function App() {
 
   const getModels = async () => {
     try {
-      const loadedModel = await tf.loadLayersModel('http://localhost:3001/lefthand/model.json');
+      const loadedModel = await tf.loadLayersModel('https://3d-cube-server.vercel.app/lefthand/model.json');
       setLeftModel(loadedModel);
       console.log('Model loaded successfully');
     } catch (error) {
       console.error('Error loading model', error);
     }
     try {
-      const loadedModel = await tf.loadLayersModel('http://localhost:3001/righthand/model.json');
+      const loadedModel = await tf.loadLayersModel('https://3d-cube-server.vercel.app/righthand/model.json');
       setRightModel(loadedModel);
       console.log('Model loaded successfully');
     } catch (error) {
