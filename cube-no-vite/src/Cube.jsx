@@ -164,7 +164,7 @@ export default function Cube() {
     const unsubPred = usePrediction.subscribe(
       (state) => state.pred,
       (value) => {
-        if (value !== null && value !== '2_hand_repo_up' && value !== '2_hand_repo_down') {
+        if (value !== null && value !== 'r_repo_down' && value.length < 2) {
           setLastPrediction(value)
           const eventDown = new KeyboardEvent('keydown', {
             key: `Key${value}`,

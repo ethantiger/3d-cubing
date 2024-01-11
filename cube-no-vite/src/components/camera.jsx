@@ -111,7 +111,7 @@ export default function Camera({leftModel, rightModel}) {
   let wasGestureR = false;
   let wasGestureL = false
   const classLabelsR = ['F','U','R','X','Y','r_repo_down','r_repo_up','r_onscreen'];
-  const classLabelsL = ['L','B','D','Z','l_repo_down','l_repo_up','l_onscreen'];
+  const classLabelsL = ['L','B','D','V','Z','l_repo_down','l_repo_up','l_onscreen'];
 
   const isMoving = (start_keypoints, finish_keypoints) => {
     const d = []
@@ -125,8 +125,8 @@ export default function Camera({leftModel, rightModel}) {
   }
  
   const isGesture = (sequenceMovement) => {
-    const firstFiveAllFalse = sequenceMovement.slice(0, 3).every(value => value === false);
-    const lastFiveAllFalse = sequenceMovement.slice(-3).every(value => value === false);
+    const firstFiveAllFalse = sequenceMovement.slice(0, 2).every(value => value === false);
+    const lastFiveAllFalse = sequenceMovement.slice(-2).every(value => value === false);
     const twoAreTrue = sequenceMovement.filter(value => value === true).length >= 2
     return firstFiveAllFalse && lastFiveAllFalse && twoAreTrue
   }
@@ -194,7 +194,7 @@ export default function Camera({leftModel, rightModel}) {
         const predictedClass = classLabelsR[predictedIndex];
         // console.log("Predicted class:", predictedClass);
         predictionsR.push(predictedClass)
-        predictionsR = predictionsR.slice(-10)
+        predictionsR = predictionsR.slice(-5)
         console.log(predictionsR)
       });
     } else if (!gestureR) {
@@ -226,7 +226,7 @@ export default function Camera({leftModel, rightModel}) {
         const predictedClass = classLabelsL[predictedIndex];
         // console.log("Predicted class:", predictedClass);
         predictionsL.push(predictedClass)
-        predictionsL = predictionsL.slice(-10)
+        predictionsL = predictionsL.slice(-5)
         console.log(predictionsL)
       });
     } else if (!gestureL) {

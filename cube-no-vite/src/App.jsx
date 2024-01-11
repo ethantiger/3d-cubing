@@ -51,7 +51,7 @@ function App() {
           {name:'Y', keys:['ArrowLeft', 'KeyY']},
           {name:'X', keys:['ArrowUp', 'KeyX']},
           {name:'Yprime', keys:['ArrowRight', 'KeyZ']},
-          {name:'Xprime', keys:['ArrowDown', 'KeyX']}
+          {name:'Xprime', keys:['ArrowDown', 'KeyV']}
         ]}
       >
         <Canvas camera={{position:[5,5,5]}}>
