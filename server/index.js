@@ -13,8 +13,8 @@ app.get('/', (req,res) => {
 })
 
 
-app.listen(3000, () => {
+app.listen(3001, () => {
   console.log('listening')
 })
 
-export default app
+// export default app
