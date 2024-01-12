@@ -1,7 +1,7 @@
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, KeyboardControls, Environment, ContactShadows } from '@react-three/drei'
+import { OrbitControls, KeyboardControls, Environment, ContactShadows, Loader } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import * as tf from '@tensorflow/tfjs';
 import './App.css'
 import Cube from './Cube';
@@ -57,10 +57,13 @@ function App() {
         <Canvas camera={{position:[5,5,5]}}>
           {window.location.hash === '#perf' && <Perf position="top-right"/>}
           <OrbitControls />
-          <Environment files={'brown_photostudio_02_4k.hdr'}/>
-          <ContactShadows position={[0,-5,0]} resolution={512} opacity={0.4} blur={3} frames={1}/>
-          <Cube envMapIntensity={1}/>
+          <Suspense fallback={null}>
+            <Environment files={'brown_photostudio_02_4k.hdr'}/>
+            <ContactShadows position={[0,-5,0]} resolution={512} opacity={0.4} blur={3} frames={1}/>
+            <Cube envMapIntensity={1}/>
+          </Suspense>
         </Canvas>
+        <Loader />
       </KeyboardControls>
       <Buttons setCamera={setCamera}></Buttons>
       {camera && leftModel && rightModel && <Camera leftModel={leftModel} rightModel={rightModel}/>}
