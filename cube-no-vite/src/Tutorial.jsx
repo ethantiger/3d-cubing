@@ -1,14 +1,15 @@
-import gsap from 'gsap'
-import { useEffect } from 'react'
-import { useLoader, useThree } from '@react-three/fiber'
+import { useLoader } from '@react-three/fiber'
+import { Text } from '@react-three/drei'
 import * as THREE from 'three'
 export default function Tutorial() {
-  const texture = useLoader(THREE.TextureLoader, 'ropen.jpeg')
+  const texture = useLoader(THREE.TextureLoader, 'f.jpeg')
 
-  return <>
-    <mesh>
-      <planeBufferGeometry attach="geometry" args={[5,5]} />
+  return <group>
+
+    <Text position={[30,-5,-20]} rotation={[-Math.PI/4,0,0]} color="black" fontSize={5}>F</Text>
+    <mesh position={[30,-5,-10]} rotation={[-Math.PI/4,0,0]}>
+      <planeBufferGeometry attach="geometry" args={[18,5]} />
       <meshBasicMaterial attach="material" map={texture} />
     </mesh>
-  </>
+  </group>
 }

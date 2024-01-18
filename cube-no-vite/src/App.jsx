@@ -20,15 +20,27 @@ function App() {
 
   const controls = useControls({
     rotationX: {
-      value: 0,
+      value: -0.63,
       step:0.01
     },
     rotationY: {
-      value: 0,
+      value: 0.78,
       step:0.01
     },
     rotationZ: {
       value: 0,
+      step:0.01
+    },
+    positionX: {
+      value: 8,
+      step:0.01
+    },
+    positionY: {
+      value: 8,
+      step:0.01
+    },
+    positionZ: {
+      value: 8,
       step:0.01
     }
   })
@@ -76,17 +88,18 @@ function App() {
       >
         <Canvas>
           <AnimatedCamera position={cameraPosition} rotation={cameraRotation}/>
-          {window.location.hash === '#perf' && <Perf position="top-right"/>}
+          {/* <AnimatedCamera position={[controls.positionX, controls.positionY, controls.positionZ]} rotation={[controls.rotationX, controls.rotationY, controls.rotationZ]}/> */}
+          {window.location.hash === '#debug' && <Perf position="bottom-left"/>}
           {/* <OrbitControls /> */}
           <Suspense fallback={null}>
-            {/* <Tutorial /> */}
+            <Tutorial />
             {/* <Text fontSize={15} textAlign="center" color="black" maxWidth={2} position={[-8,-5,-8]} rotation={[-Math.PI/2,0,Math.PI/4]}>The Cube</Text> */}
             <Environment files={'brown_photostudio_02_4k.hdr'}/>
             <ContactShadows position={[0,-5,0]} resolution={512} opacity={0.4} blur={3} frames={1}/>
             <Cube envMapIntensity={1}/>
           </Suspense>
         </Canvas>
-        <Leva />
+        <Leva/>
         <Loader />
       </KeyboardControls>
       <Buttons setCamera={setCamera} setCameraPosition={setCameraPosition} setCameraRotation={setCameraRotation}></Buttons>

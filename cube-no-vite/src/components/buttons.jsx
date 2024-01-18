@@ -3,28 +3,35 @@ import './buttons.css'
 import usePrediction from '../stores/usePrediction'
 
 export default function Buttons({setCamera, setCameraPosition, setCameraRotation}) {
-  const [instructions, setInstructions] = useState(false)
+  const [tutorial, setTutorial] = useState(false)
   const changeReset = usePrediction((state) => state.changeReset)
   const startShuffle = usePrediction((state) => state.startShuffle)
 
   const handleInfoClick = () => {
-    setCameraPosition((cameraPosition) => {
-      return [cameraPosition[0]+1, cameraPosition[1]+1, cameraPosition[2] + 1]
-    })
-    setCameraRotation((cameraRotation) => {
-      return [cameraRotation[0], cameraRotation[1], cameraRotation[2]]
-    })
-
-    // setInstructions(!instructions)
+    if (!tutorial) {
+      setCameraPosition((cameraPosition) => {
+        return [30, cameraPosition[1], cameraPosition[2]]
+      })
+      setCameraRotation((cameraRotation) => {
+        return [cameraRotation[0], 0, cameraRotation[2]]
+      })
+    } else {
+      setCameraPosition((cameraPosition) => {
+        return [8, cameraPosition[1], cameraPosition[2]]
+      })
+      setCameraRotation((cameraRotation) => {
+        return [cameraRotation[0], 0.78, cameraRotation[2]]
+      })
+    }
+    setTutorial(!tutorial)
   }
 
   const handleCameraClick = () => {
     setCamera((camera) => !camera)
   }
   return <>
-    {instructions && <img src="instructions.jpeg" alt="Image with instructions" className="instructions"/>}
-    <button className="info-button" type="button" onClick={handleInfoClick}>
-      <img src="info.svg" alt="Info Icon" width="24" height="24" />
+    <button className="info-button" type="button" onClick={handleInfoClick} style={{backgroundColor:tutorial ? "#FF7F7F":"White"}}>
+      {tutorial ? <img src="close.svg" alt="Info Icon" width="24" height="24" />:<img src="info.svg" alt="Info Icon" width="24" height="24" />}
     </button>
     <button className="random-button" type="button" onClick={startShuffle}>
         <img src="random.svg" alt="Random Icon" width="35" height="35" />
