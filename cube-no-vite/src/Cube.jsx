@@ -28,8 +28,7 @@ export default function Cube() {
   const changeReset = usePrediction((state) => state.changeReset)
   const endShuffle = usePrediction((state) => state.endShuffle)
   
-  let sceneIndex = 1
-  if (window.location.hash === '#perf') sceneIndex = 2
+  let sceneIndex = three.scene.children.findIndex((object) => object.name === "Scene")
   
   const pieces = [...cube.scene.children]
   // axis = {name: 'X', value: 1}

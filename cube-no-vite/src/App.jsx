@@ -1,17 +1,37 @@
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, KeyboardControls, Environment, ContactShadows, Loader } from '@react-three/drei'
+import { OrbitControls, KeyboardControls, Environment, ContactShadows, Loader, Text } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
 import { useEffect, useState, Suspense } from 'react'
 import * as tf from '@tensorflow/tfjs';
 import './App.css'
 import Cube from './Cube';
+import AnimatedCamera from './AnimatedCamera';
+import Tutorial from './Tutorial';
 import Camera from './components/camera';
 import Buttons from './components/buttons';
+import { Leva, useControls } from 'leva';
 
 function App() {
   const [leftModel, setLeftModel] = useState(null)
   const [rightModel, setRightModel] = useState(null)
   const [camera, setCamera] = useState(false)
+  const [cameraPosition, setCameraPosition] = useState([8,8,8])
+  const [cameraRotation, setCameraRotation] = useState([-0.63,0.78,0])
+
+  const controls = useControls({
+    rotationX: {
+      value: 0,
+      step:0.01
+    },
+    rotationY: {
+      value: 0,
+      step:0.01
+    },
+    rotationZ: {
+      value: 0,
+      step:0.01
+    }
+  })
 
   const getModels = async () => {
     try {
@@ -54,18 +74,22 @@ function App() {
           {name:'Xprime', keys:['ArrowDown', 'KeyV']}
         ]}
       >
-        <Canvas camera={{position:[5,5,5]}}>
+        <Canvas>
+          <AnimatedCamera position={cameraPosition} rotation={cameraRotation}/>
           {window.location.hash === '#perf' && <Perf position="top-right"/>}
-          <OrbitControls />
+          {/* <OrbitControls /> */}
           <Suspense fallback={null}>
+            {/* <Tutorial /> */}
+            {/* <Text fontSize={15} textAlign="center" color="black" maxWidth={2} position={[-8,-5,-8]} rotation={[-Math.PI/2,0,Math.PI/4]}>The Cube</Text> */}
             <Environment files={'brown_photostudio_02_4k.hdr'}/>
             <ContactShadows position={[0,-5,0]} resolution={512} opacity={0.4} blur={3} frames={1}/>
             <Cube envMapIntensity={1}/>
           </Suspense>
         </Canvas>
+        <Leva />
         <Loader />
       </KeyboardControls>
-      <Buttons setCamera={setCamera}></Buttons>
+      <Buttons setCamera={setCamera} setCameraPosition={setCameraPosition} setCameraRotation={setCameraRotation}></Buttons>
       {camera && leftModel && rightModel && <Camera leftModel={leftModel} rightModel={rightModel}/>}
     </>
   )
