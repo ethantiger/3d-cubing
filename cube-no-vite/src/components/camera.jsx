@@ -257,7 +257,7 @@ export default function Camera({leftModel, rightModel}) {
   return (
     <div id="canvas-wrapper" ref={wrapperRef}>
       <canvas id="output" ref={canvasRef}></canvas>
-      <video id="video"ref={videoRef} autoPlay style={{visibility:"hidden", width:"auto", height:"auto"}}></video>
+      <video id="video"ref={videoRef} autoPlay style={{visibility:"hidden", width:"auto", height:"auto", position:'absolute', top:0,left:0}}></video>
     </div>
   )
 }

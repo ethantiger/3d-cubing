@@ -34,11 +34,22 @@ button:hover {
   bottom:220px;
 }
 
+.next-button:hover {
+  background: #EEE;
+  transform: translate(-50%, 0%) scale(1.1);
+}
+
+.next-button {
+  top: 85%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+}
+
 .instructions {
   width: 800px; 
   height: auto; 
   position:absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(1.1);
 }
