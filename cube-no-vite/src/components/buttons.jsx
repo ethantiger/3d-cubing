@@ -55,5 +55,6 @@ export default function Buttons({setCamera, setCameraPosition, setCameraRotation
     <button className="camera-button" onClick={handleCameraClick}>
         <img src="camera.svg" alt="Camera Icon" width="24" height="24" />
     </button>
+    <a href="https://github.com/ethantiger/3d-cubing">github.com/ethantiger/3d-cubing</a>
   </>
 }
