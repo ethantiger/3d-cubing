@@ -12,6 +12,19 @@ const originalPosition = [
   [0,-1,-1],[1,-1,-1],[-1,-1,-1],[0,-1,1],[1,-1,1],[-1,-1,1]
 ]
 
+const keyMap = {
+  'F':'F',
+  'R':'R',
+  'U':'U',
+  'Y':'Y',
+  'X':'X',
+  'L':'L',
+  'B':'B',
+  'D':'D',
+  'Z':'Y`',
+  'V':'X`'
+}
+
 export default function Cube() {
   const [press, setPress] = useState(true)
   const [rotationInProgress, setRotationInProgress] = useState(false);
@@ -165,7 +178,7 @@ export default function Cube() {
       (state) => state.pred,
       (value) => {
         if (value !== null && value !== 'r_repo_down' && value.length < 2) {
-          setLastPrediction(value)
+          setLastPrediction(keyMap[value])
           const eventDown = new KeyboardEvent('keydown', {
             key: `Key${value}`,
           });
