@@ -89,7 +89,7 @@ function App() {
         <Canvas>
           <AnimatedCamera position={cameraPosition} rotation={cameraRotation}/>
           {/* <AnimatedCamera position={[controls.positionX, controls.positionY, controls.positionZ]} rotation={[controls.rotationX, controls.rotationY, controls.rotationZ]}/> */}
-          {window.location.hash === '#debug' && <Perf position="bottom-left"/>}
+          {window.location.hash === '#debug' && <Perf position="top-right"/>}
           {/* <OrbitControls /> */}
           <Suspense fallback={null}>
             <Tutorial />
