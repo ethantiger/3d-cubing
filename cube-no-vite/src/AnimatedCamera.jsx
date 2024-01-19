@@ -28,5 +28,5 @@ export default function AnimatedCamera({position, rotation}) {
     })
   },[position, rotation])
 
-  return <PerspectiveCamera makeDefault ref={cameraRef} position={[15,15,15]} rotation={[2.3,2.54,3.7]}/>
+  return <PerspectiveCamera makeDefault ref={cameraRef} position={[20,20,20]} rotation={[2.3,2.54,3.7]}/>
 }

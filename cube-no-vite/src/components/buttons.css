@@ -18,6 +18,10 @@ button:hover {
   background: #EEE;
   transform: scale(1.1);
 }
+
+button:hover .tooltip {
+  visibility: visible;
+}
 .camera-button {
   bottom:40px; 
 }
@@ -30,8 +34,12 @@ button:hover {
   bottom:160px;
 }
 
-.info-button {
+.gestures-button {
   bottom:220px;
+}
+
+.info-button {
+  bottom:280px;
 }
 
 .next-button:hover {
@@ -44,6 +52,8 @@ button:hover {
   left: 50%;
   transform: translate(-50%, 0%);
 }
+
+
 
 .instructions {
   width: 800px; 
@@ -59,4 +69,27 @@ a {
   left:20px;
   bottom:20px;
   font-family:Arial, Helvetica, sans-serif
+}
+
+.tooltip {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 25%;
+  left: -150%;
+  margin-left: -60px;
+}
+
+.gestureList {
+  position:absolute;
+  top:0%;
+  right:0%;
+  width:490px;
+  height:auto;
 }
