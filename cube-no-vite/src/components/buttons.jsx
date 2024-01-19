@@ -45,7 +45,7 @@ export default function Buttons({setCamera, setCameraPosition, setCameraRotation
     <button className="info-button" onClick={handleInfoClick} style={{backgroundColor:tutorial ? "#FF7F7F":"White"}}>
       {tutorial ? <img src="close.svg" alt="Info Icon" width="24" height="24" />:<img src="info.svg" alt="Info Icon" width="24" height="24" />}
     </button>
-    {tutorial && <button className="next-button" onClick={handleNext}><img src="next.svg" alt="Info Icon" width="24" height="24" /></button>}
+    {tutorial && tutorialState !== 13 && <button className="next-button" onClick={handleNext}><img src="next.svg" alt="Info Icon" width="24" height="24" /></button>}
     <button className="random-button" onClick={startShuffle}>
         <img src="random.svg" alt="Random Icon" width="35" height="35" />
     </button>
