@@ -21,6 +21,7 @@ export default function Tutorial() {
     "Repositions left hand to upright position",
   ]
   const keyboardControlArray = ["F", "R", "U", "Left Arrow", "Up Arrow","NA","NA","L","B","D","Right Arrow","Down Arrow","NA","NA"]
+  const tutorialSize = [18,25,18,18,18,12,12,20,18,18,18,18,12,12]
   const texturesArray = []
   tutorialArray.forEach((control) => {
     texturesArray.push(useLoader(THREE.TextureLoader, `${control}.jpeg`))
@@ -33,7 +34,7 @@ export default function Tutorial() {
       <Text position={[(i+1)*30,-5,-4]} rotation={[-Math.PI/4,0,0]} color="black" fontSize={0.8}>{descriptions[i]}</Text>
       <Text position={[(i+1)*30,-5,-2.5]} rotation={[-Math.PI/4,0,0]} color="black" fontSize={0.5}>KeyBind: {keyboardControlArray[i]}</Text>
       <mesh position={[(i+1)*30,-5,-10]} rotation={[-Math.PI/4,0,0]}>
-        <planeBufferGeometry attach="geometry" args={[18,5]} />
+        <planeBufferGeometry attach="geometry" args={[tutorialSize[i],5]} />
         <meshBasicMaterial attach="material" map={texturesArray[i]} />
       </mesh>
       </Fragment>

@@ -18,32 +18,32 @@ function App() {
   const [cameraPosition, setCameraPosition] = useState([8,8,8])
   const [cameraRotation, setCameraRotation] = useState([-0.63,0.78,0])
 
-  const controls = useControls({
-    rotationX: {
-      value: -0.63,
-      step:0.01
-    },
-    rotationY: {
-      value: 0.78,
-      step:0.01
-    },
-    rotationZ: {
-      value: 0,
-      step:0.01
-    },
-    positionX: {
-      value: 8,
-      step:0.01
-    },
-    positionY: {
-      value: 8,
-      step:0.01
-    },
-    positionZ: {
-      value: 8,
-      step:0.01
-    }
-  })
+  // const controls = useControls({
+  //   rotationX: {
+  //     value: -0.63,
+  //     step:0.01
+  //   },
+  //   rotationY: {
+  //     value: 0.78,
+  //     step:0.01
+  //   },
+  //   rotationZ: {
+  //     value: 0,
+  //     step:0.01
+  //   },
+  //   positionX: {
+  //     value: 8,
+  //     step:0.01
+  //   },
+  //   positionY: {
+  //     value: 8,
+  //     step:0.01
+  //   },
+  //   positionZ: {
+  //     value: 8,
+  //     step:0.01
+  //   }
+  // })
 
   const getModels = async () => {
     try {
