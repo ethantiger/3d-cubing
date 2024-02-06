@@ -52,6 +52,7 @@ export default function Camera({leftModel, rightModel}) {
   }
 
   function drawPath(points, closePath) {
+    if (!points[0]) return;
     const region = new Path2D();
     region.moveTo(points[0].x, points[0].y);
     for (let i = 1; i < points.length; i++) {
@@ -246,11 +247,11 @@ export default function Camera({leftModel, rightModel}) {
 
     // console.log(predictionsR)
     updatePred(null)
-    // for (let i =0; i < hands.length; i++) {
-    //   if (hands[i].keypoints != null) {
-    //     drawKeypoints(hands[i].keypoints, hands[i].handedness)
-    //   }
-    // }
+    for (let i =0; i < hands.length; i++) {
+      if (hands[i].keypoints != null) {
+        drawKeypoints(hands[i].keypoints, hands[i].handedness)
+      }
+    }
     requestID.current = requestAnimationFrame(onFrame)
   }
 
